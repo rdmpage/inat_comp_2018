@@ -60,8 +60,8 @@ class INAT(data.Dataset):
         self.taxonomy, self.classes_taxonomic = load_taxonomy(ann_data, self.tax_levels, self.classes)
 
         # print out some stats
-        print '\t' + str(len(self.imgs)) + ' images'
-        print '\t' + str(len(set(self.classes))) + ' classes'
+        print('\t' + str(len(self.imgs)) + ' images')
+        print('\t' + str(len(set(self.classes))) + ' classes')
 
         self.root = root
         self.is_train = is_train

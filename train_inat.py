@@ -29,18 +29,19 @@ class Params:
     weight_decay = 1e-4
     print_freq = 100
 
-    resume = ''  # set this to path of model to resume training
+    resume = '/home/j1k1000o/inaturalist/weights/iNat_2018_InceptionV3.pth'  
+    # set this to path of model to resume training
     #resume = '/home/macaodha/Projects/inat2018/code/model_best.pth.tar'
-    train_file = '/media/Storage_1/Datasets/inat2018/train2018.json'
-    val_file = '/media/Storage_1/Datasets/inat2018/val2018.json'
-    data_root = '/media/Storage_1/Datasets/inat2018/images/'
+    train_file = '/home/j1k1000o/inaturalist/dataset/train2018.json'
+    val_file = '/home/j1k1000o/inaturalist/dataset/val2018.json'
+    data_root = '/home/j1k1000o/inaturalist/dataset/'
 
     # set evaluate to True to run the test set
     evaluate = False
     save_preds = True
     op_file_name = 'inat2018_test_preds.csv' # submission file
     if evaluate == True:
-        val_file = '/media/Storage_1/Datasets/inat2018/test2018.json'
+        val_file = '/home/j1k1000o/inaturalist/dataset/test2018.json'
 
 best_prec3 = 0.0  # store current best top 3
 
@@ -56,7 +57,6 @@ def main():
     model = inception_v3(pretrained=True)
     model.fc = nn.Linear(2048, args.num_classes)
     model.aux_logits = False
-    #model = torch.nn.DataParallel(model).cuda()
     model = model.cuda()
 
     # define loss function (criterion) and optimizer
@@ -79,6 +79,7 @@ def main():
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
+    model = torch.nn.DataParallel(model).cuda()
     cudnn.benchmark = True
 
     # data loading code
@@ -141,7 +142,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # measure data loading time
         data_time.update(time.time() - end)
 
-	input = input.cuda()
+        input = input.cuda()
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
@@ -152,7 +153,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         # measure accuracy and record loss
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        losses.update(loss.data[0], input.size(0))
+        losses.update(loss.item(), input.size(0))
         top1.update(prec1[0], input.size(0))
         top3.update(prec3[0], input.size(0))
 
