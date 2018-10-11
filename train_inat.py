@@ -48,11 +48,8 @@ class Params:
 best_prec3 = 0.0  # store current best top 3
 
 
-def main():
-    global args, best_prec3, device
-    device = torch.device('cuda')
-    args = Params()
-
+def build_model_and_optim():
+    global device, args, resume
     # load pretrained model
     print("Using pre-trained inception_v3")
     # use this line if instead if you want to train another model
@@ -62,25 +59,35 @@ def main():
     model.aux_logits = False
     model = model.to(device)
 
-    # define loss function (criterion) and optimizer
-    criterion = nn.CrossEntropyLoss().to(device)
     optimizer = SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
-
+                    momentum=args.momentum,
+                    weight_decay=args.weight_decay)
     # optionally resume from a checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
-            print("=> loading checkpoint '{}'".format(args.resume))
+            print("=> loading checkpoint '{}' for inaturalist-inception".format(
+                args.resume))
             checkpoint = torch.load(args.resume)
             args.start_epoch = checkpoint['epoch']
             best_prec3 = checkpoint['best_prec3']
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
-            print("=> loaded checkpoint '{}' (epoch {})"
-                  .format(args.resume, checkpoint['epoch']))
+            print("=> loaded checkpoint '{}' (epoch {})".format(
+                args.resume, checkpoint['epoch']))
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
+
+    return model, optimizer
+
+
+def main():
+    global args, best_prec3, device
+    device = torch.device('cuda')
+    args = Params()
+
+    model, optimizer = build_model_and_optim()
+    # define loss function (criterion) and optimizer
+    criterion = nn.CrossEntropyLoss().to(device)
 
     model = torch.nn.DataParallel(model)
     cudnn.benchmark = True
