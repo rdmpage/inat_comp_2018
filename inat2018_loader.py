@@ -55,9 +55,9 @@ class INAT(data.Dataset):
             self.classes = [0]*len(self.imgs)
 
         # load taxonomy
-        self.tax_levels = ['id', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom']
+        # self.tax_levels = ['id', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom']
                            #8142, 4412,    1120,     273,     57,      25,       6
-        self.taxonomy, self.classes_taxonomic = load_taxonomy(ann_data, self.tax_levels, self.classes)
+        # self.taxonomy, self.classes_taxonomic = load_taxonomy(ann_data, self.tax_levels, self.classes)
 
         # print out some stats
         print('\t' + str(len(self.imgs)) + ' images')
@@ -89,7 +89,7 @@ class INAT(data.Dataset):
         im_id = self.ids[index]
         img = self.loader(path)
         species_id = self.classes[index]
-        tax_ids = self.classes_taxonomic[species_id]
+        # tax_ids = self.classes_taxonomic[species_id]
 
         if self.is_train:
             img = self.scale_aug(img)
@@ -101,7 +101,7 @@ class INAT(data.Dataset):
         img = self.tensor_aug(img)
         img = self.norm_aug(img)
 
-        return img, im_id, species_id, tax_ids
+        return img, im_id, species_id# , tax_ids
 
     def __len__(self):
         return len(self.imgs)

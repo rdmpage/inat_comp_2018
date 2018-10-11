@@ -10,6 +10,8 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.utils.data
+
+from torch.optim import SGD
 #import torchvision.models as models
 from inception import *
 
@@ -18,7 +20,7 @@ import inat2018_loader
 class Params:
     # arch = 'inception_v3'
     num_classes = 8142
-    workers = 6
+    workers = 10
     epochs = 100
     start_epoch = 0
     batch_size = 64  # might want to make smaller 
@@ -47,7 +49,8 @@ best_prec3 = 0.0  # store current best top 3
 
 
 def main():
-    global args, best_prec3
+    global args, best_prec3, device
+    device = torch.device('cuda')
     args = Params()
 
     # load pretrained model
@@ -57,11 +60,11 @@ def main():
     model = inception_v3(pretrained=True)
     model.fc = nn.Linear(2048, args.num_classes)
     model.aux_logits = False
-    model = model.cuda()
+    model = model.to(device)
 
     # define loss function (criterion) and optimizer
-    criterion = nn.CrossEntropyLoss().cuda()
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    criterion = nn.CrossEntropyLoss().to(device)
+    optimizer = SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
 
@@ -79,7 +82,7 @@ def main():
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
-    model = torch.nn.DataParallel(model).cuda()
+    model = torch.nn.DataParallel(model)
     cudnn.benchmark = True
 
     # data loading code
@@ -91,7 +94,8 @@ def main():
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size,
                    shuffle=True, num_workers=args.workers, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(val_dataset,
-                  batch_size=args.batch_size, shuffle=False,
+                  batch_size=32 if args.batch_size > 32 else args.batch_size, 
+                  shuffle=False,
                   num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
@@ -126,6 +130,7 @@ def main():
 
 
 def train(train_loader, model, criterion, optimizer, epoch):
+    global device
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -138,24 +143,22 @@ def train(train_loader, model, criterion, optimizer, epoch):
     end = time.time()
     print('Epoch:{0}'.format(epoch))
     print('Itr\t\tTime\t\tData\t\tLoss\t\tPrec@1\t\tPrec@3')
-    for i, (input, im_id, target, tax_ids) in enumerate(train_loader):
+    for i, (input_tensor, im_id, target) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
 
-        input = input.cuda()
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
+        input_tensor = input_tensor.to(device)
+        target = target.to(device)
 
         # compute output
-        output = model(input_var)
-        loss = criterion(output, target_var)
+        output = model(input_tensor)
+        loss = criterion(output, target)
 
         # measure accuracy and record loss
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        losses.update(loss.item(), input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top3.update(prec3[0], input.size(0))
+        losses.update(loss.item(), input_tensor.size(0))
+        top1.update(prec1[0], input_tensor.size(0))
+        top3.update(prec3[0], input_tensor.size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -178,6 +181,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
 
 def validate(val_loader, model, criterion, save_preds=False):
+    global device
     batch_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
@@ -191,28 +195,26 @@ def validate(val_loader, model, criterion, save_preds=False):
     im_ids = []
 
     print('Validate:\tTime\t\tLoss\t\tPrec@1\t\tPrec@3')
-    for i, (input, im_id, target, tax_ids) in enumerate(val_loader):
+    for i, (input_tensor, im_id, target) in enumerate(val_loader):
 
-        input = input.cuda()
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input, volatile=True)
-        target_var = torch.autograd.Variable(target, volatile=True)
+        input_tensor = input_tensor.to(device)
+        target = target.to(device)
 
         # compute output
-        output = model(input_var)
-        loss = criterion(output, target_var)
+        output = model(input_tensor)
+        loss = criterion(output, target)
 
         if save_preds:
             # store the top K classes for the prediction
             im_ids.append(im_id.cpu().numpy().astype(np.int))
-            _, pred_inds = output.data.topk(3,1,True,True)
+            _, pred_inds = output.data.topk(3, 1, True, True)
             pred.append(pred_inds.cpu().numpy().astype(np.int))
 
         # measure accuracy and record loss
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top3.update(prec3[0], input.size(0))
+        losses.update(loss.item(), input_tensor.size(0))
+        top1.update(prec1[0], input_tensor.size(0))
+        top3.update(prec3[0], input_tensor.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
