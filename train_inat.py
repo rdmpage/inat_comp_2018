@@ -81,9 +81,9 @@ def build_model_and_optim():
     return model, optimizer
 
 
-def main():
+def main(parser_args):
     global args, best_prec3, device
-    device = torch.device('cuda')
+    device = torch.device('cpu' if parser_args.no_cuda else 'cuda')
     args = Params()
 
     model, optimizer = build_model_and_optim()
@@ -299,5 +299,5 @@ if __name__ == '__main__':
         'ultrametric embeddings net-training')
     parser.add_argument('--no-cuda', action='store_true', 
         help='Do not use cuda to train model')
-    args = parser.parse_args()
-    main()
+    parser_args = parser.parse_args()
+    main(parser_args)
