@@ -4,6 +4,7 @@ import os
 import shutil
 import time
 import numpy as np
+import argparse
 
 import torch
 import torch.nn as nn
@@ -294,4 +295,9 @@ def accuracy(output, target, topk=(1,)):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='PyTorch iNaturalist ' \
+        'ultrametric embeddings net-training')
+    parser.add_argument('--no-cuda', action='store_true', 
+        help='Do not use cuda to train model')
+    args = parser.parse_args()
     main()
