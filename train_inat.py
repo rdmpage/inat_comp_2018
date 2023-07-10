@@ -149,7 +149,7 @@ def main(parser_args):
         save_checkpoint({
             'epoch': epoch + 1,
             #'arch': args.arch,
-            'state_dict': model.state_dict(),
+            'state_dict': state_dict,
             'best_prec3': best_prec3,
             'optimizer' : optimizer.state_dict(),
         }, is_best)
