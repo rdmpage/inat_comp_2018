@@ -21,10 +21,10 @@ import inat2018_loader
 class Params:
     # arch = 'inception_v3'
     num_classes = 8142
-    workers = 10
+    workers = 8
     epochs = 100
     start_epoch = 0
-    batch_size = 64  # might want to make smaller 
+    batch_size = 32  # might want to make smaller 
     lr = 0.0045
     lr_decay = 0.94
     epoch_decay = 4
