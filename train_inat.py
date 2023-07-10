@@ -138,6 +138,14 @@ def main(parser_args):
         # remember best prec@1 and save checkpoint
         is_best = prec3 > best_prec3
         best_prec3 = max(prec3, best_prec3)
+        
+        # https://discuss.pytorch.org/t/validation-and-test-results-not-the-same-for-same-data/183679
+        # https://discuss.pytorch.org/t/runtimeerror-error-s-in-loading-state-dict-for-inception3/90273
+        try:
+            state_dict = model.module.state_dict()
+        except AttributeError:
+            state_dict = model.state_dict()        
+        
         save_checkpoint({
             'epoch': epoch + 1,
             #'arch': args.arch,
