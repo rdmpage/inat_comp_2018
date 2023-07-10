@@ -7,7 +7,7 @@ This repository https://github.com/rdmpage/inat_comp_2018 is a fork of https://g
 
 #### Apple Mac version
 
-A few tweaks are required to get this code to work. I am using  version 3.11.3 of python on an Apple MacBook Pro running macOS Ventura 13.4. Some of the changes are because the libraries used by this code have changed, others are because I’m running on a Mac. These all seem straightforward, but some involved a fair amount of hair pulling and teeth gnashing (partly reflecting that I am a newbie to both Python and machine learning.
+A few tweaks are required to get this code to work. I am using  version 3.11.3 of python on an Apple MacBook Pro running macOS Ventura 13.4. Some of the changes are because the libraries used by this code have changed, others are because I’m running on a Mac. These all seem straightforward, but some involved a fair amount of hair pulling and teeth gnashing (partly reflecting that I am a newbie to both Python and machine learning).
 
 - set data source and training/validation/test splits to my files
 - change type `np.int` to `int`
@@ -16,7 +16,7 @@ A few tweaks are required to get this code to work. I am using  version 3.11.3 o
 - remove `.module` keys from `state_dict` so model can be saved and read correctly
 - change `workers` from 10 to 8, and `batch_size` from 64 to 32.
 
-Once running, for larger data sets the program would quite complaining: `OSError: [Errno 24] Too many open files`. This can be fixed by finding out the system limit for open files (`ulimit -n`), which on my Mac was 256, then increasing that limit, e.g.: `ulimit -n 1024`
+Once running, for larger data sets the program would quit complaining: `OSError: [Errno 24] Too many open files`. This can be fixed by finding out the system limit for open files (`ulimit -n`), which on my Mac was 256, then increasing that limit, e.g.: `ulimit -n 1024`
 
 
 ### Training
@@ -44,6 +44,8 @@ By setting the following flags it's possible to generate a submission file for t
     data_root = 'data_path/inat2018/images/'             # path to test images
     op_file_name = 'inat2018_test_preds.csv'             # submission filename
 ```
+
+Note that when running in this model the validation scores will be zero as the test file is just a list of images. Unlike the validation file it lacks annotations saying what each image is. This is, of course, the point of the challenge, participants are asked to submit identifications for a set of unclassified images.
 
 ### Reading
 
