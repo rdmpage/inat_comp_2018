@@ -82,7 +82,18 @@ def build_model_and_optim():
 
 def main(parser_args):
     global args, best_prec3, device
-    device = torch.device('cpu' if parser_args.no_cuda else 'cuda')
+    #device = torch.device('cpu' if parser_args.no_cuda else 'cuda')
+    
+    # https://github.com/pytorch/pytorch/issues/102718
+    has_gpu = torch.cuda.is_available()
+    has_mps = getattr(torch,'has_mps',False)
+    device = "mps" if getattr(torch,'has_mps',False) \
+        else "gpu" if torch.cuda.is_available() else "cpu"
+
+    print("GPU is", "available" if has_gpu else "NOT AVAILABLE")
+    print("MPS (Apple Metal) is", "AVAILABLE" if has_mps else "NOT AVAILABLE")
+    print(f"Target device is {device}")    
+    
     args = Params()
 
     model, optimizer = build_model_and_optim()
