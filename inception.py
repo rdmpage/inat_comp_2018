@@ -1,5 +1,5 @@
 # Same as the version from the official start_epoch
-# ttps://github.com/pytorch/vision/blob/master/torchvision/models/inception.py
+# https://github.com/pytorch/vision/blob/master/torchvision/models/inception.py
 # Only change being that it can take variable sized inputs
 # See line 122
 
