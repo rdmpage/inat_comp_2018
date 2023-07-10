@@ -32,19 +32,18 @@ class Params:
     weight_decay = 1e-4
     print_freq = 100
 
-    resume = '/home/j1k1000o/inaturalist/weights/iNat_2018_InceptionV3.pth'  
     # set this to path of model to resume training
-    #resume = '/home/macaodha/Projects/inat2018/code/model_best.pth.tar'
-    train_file = '/home/j1k1000o/inaturalist/dataset/train2018.json'
-    val_file = '/home/j1k1000o/inaturalist/dataset/val2018.json'
-    data_root = '/home/j1k1000o/inaturalist/dataset/'
+    resume = 'model_best.pth.tar'  
+    train_file = 'train.json'
+    val_file   = 'val.json'
+    data_root  = '/Users/rpage/Library/CloudStorage/GoogleDrive-rdmpage@gmail.com/My Drive/iNat/'
 
     # set evaluate to True to run the test set
     evaluate = False
     save_preds = True
     op_file_name = 'inat2018_test_preds.csv' # submission file
     if evaluate == True:
-        val_file = '/home/j1k1000o/inaturalist/dataset/test2018.json'
+        val_file = 'test.json'
 
 best_prec3 = 0.0  # store current best top 3
 
