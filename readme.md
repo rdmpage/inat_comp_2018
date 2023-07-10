@@ -1,13 +1,31 @@
 # iNaturalist Competition 2018 Training Code  
-This code finetunes an Inception V3 model (pretrained on ImageNet) on the iNaturalist 2018 competition [dataset](https://github.com/visipedia/inat_comp).
+This code fine tunes an Inception V3 model (pretrained on ImageNet) on the iNaturalist 2018 competition [dataset](https://github.com/visipedia/inat_comp).
+
+### Background
+
+This repository https://github.com/rdmpage/inat_comp_2018 is a fork of https://github.com/juancprzs/inat_comp_2018, which itself is a fork of the original repository https://github.com/macaodha/inat_comp_2018. I have updated the original README to reflect my own experience getting this code to work on an Apple MacBook Pro with an M1 chip.
+
+#### Apple Mac version
+
+A few tweaks are required to get this code to work. I am using  version 3.11.3 of python on an Apple MacBook Pro running macOS Ventura 13.4. Some of the changes are because the libraries used by this code have changed, others are because I’m running on a Mac. These all seem straightforward, but some involved a fair amount of hair pulling and teeth gnashing (partly reflecting that I am a newbie to both Python and machine learning.
+
+- set data source and training/validation/test splits to my files
+- change type `np.int` to `int`
+- replace call to `view` function with `replace`
+- use Apple Metal (`mps` device)
+- remove `.module` keys from `state_dict` so model can be saved and read correctly
+- change `workers` from 10 to 8, and `batch_size` from 64 to 32.
+
 
 
 ### Training
-The network was trained on Ubuntu 16.04 using PyTorch 0.3.0. Each training epoch took about 1.5 hours using a GTX Titan X.  
+~~The network was trained on Ubuntu 16.04 using PyTorch 0.3.0. Each training epoch took about 1.5 hours using a GTX Titan X~~.  
 The links for the raw data are available [here](https://github.com/visipedia/inat_comp).
-We also provide a trained model that can be downloaded from [here](http://vision.caltech.edu/~macaodha/inat2018/iNat_2018_InceptionV3.pth.tar).
+~~We also provide a trained model that can be downloaded from [here](http://vision.caltech.edu/~macaodha/inat2018/iNat_2018_InceptionV3.pth.tar~~).
+This link no longer works so the trained model is unavailable.
+
 Every epoch the code will save a checkpoint and the current best model according to validation accuracy.  
-Training for 75 epochs results in a top one accuracy of 60.20% and top three of 77.91% on the validation set.
+~~Training for 75 epochs results in a top one accuracy of 60.20% and top three of 77.91% on the validation set~~.
 
 
 ### Ideas for Improvement  
