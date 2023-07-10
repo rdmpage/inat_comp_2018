@@ -16,6 +16,7 @@ A few tweaks are required to get this code to work. I am using  version 3.11.3 o
 - remove `.module` keys from `state_dict` so model can be saved and read correctly
 - change `workers` from 10 to 8, and `batch_size` from 64 to 32.
 
+Once running, for larger data sets the program would quite complaining: `OSError: [Errno 24] Too many open files`. This can be fixed by finding out the system limit for open files (`ulimit -n`), which on my Mac was 256, then increasing that limit, e.g.: `ulimit -n 1024`
 
 
 ### Training
@@ -43,3 +44,10 @@ By setting the following flags it's possible to generate a submission file for t
     data_root = 'data_path/inat2018/images/'             # path to test images
     op_file_name = 'inat2018_test_preds.csv'             # submission filename
 ```
+
+### Reading
+
+Van Horn G, Mac Aodha O, Song Y, Cui Y, Sun C, Shepard A, Adam H, Perona P, Belongie S (2017) The iNaturalist Species Classification and Detection Dataset. In: arXiv.org. https://arxiv.org/abs/1707.06642v2. Accessed 10 Jul 2023
+
+Horn GV, Aodha OM, Song Y, Cui Y, Sun C, Shepard A, Adam H, Perona P, Belongie S (2018) The iNaturalist Species Classification and Detection Dataset. IEEE Computer Society, pp 8769–8778 https://doi.org/10.1109/CVPR.2018.00914
+
