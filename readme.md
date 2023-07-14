@@ -5,16 +5,17 @@ This code fine tunes an Inception V3 model (pretrained on ImageNet) on the iNatu
 
 This repository https://github.com/rdmpage/inat_comp_2018 is a fork of https://github.com/juancprzs/inat_comp_2018, which itself is a fork of the original repository https://github.com/macaodha/inat_comp_2018. I have updated the original README to reflect my own experience getting this code to work on an Apple MacBook Pro with an M1 chip.
 
+The original code includes the ability to format the output for the [iNaturalist Challenge at FGVC5 on Kaggle](https://www.kaggle.com/competitions/inaturalist-2018/data).
+
 #### Apple Mac version
 
-A few tweaks are required to get this code to work. I am using  version 3.11.3 of python on an Apple MacBook Pro running macOS Ventura 13.4. Some of the changes are because the libraries used by this code have changed, others are because I’m running on a Mac. These all seem straightforward, but some involved a fair amount of hair pulling and teeth gnashing (partly reflecting that I am a newbie to both Python and machine learning).
+A few tweaks are required to get this code to work. I am using  Python 3.11.3 on an Apple MacBook Pro running macOS Ventura 13.4. Some of the changes are because the libraries used by the original code have changed, others are because I’m running on a Mac. These all seem straightforward, but some involved a fair amount of hair pulling and teeth gnashing (partly reflecting that I am a newbie to both Python and machine learning).
 
-- set data source and training/validation/test splits to my files
+- change `workers` from 10 to 8, and `batch_size` from 64 to 32.- set data source and training/validation/test splits to my files
 - change type `np.int` to `int`
 - replace call to `view` function with `replace`
 - use Apple Metal (`mps` device)
 - remove `.module` keys from `state_dict` so model can be saved and read correctly
-- change `workers` from 10 to 8, and `batch_size` from 64 to 32.
 
 Once running, for larger data sets the program would quit complaining: `OSError: [Errno 24] Too many open files`. This can be fixed by finding out the system limit for open files (`ulimit -n`), which on my Mac was 256, then increasing that limit, e.g.: `ulimit -n 1024`
 
