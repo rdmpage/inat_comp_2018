@@ -34,7 +34,7 @@ class Params:
 
     # set this to path of model to resume training
     resume = 'model_best.pth.tar'  
-    val_file   = 'val.json'
+    val_file   = 'val-lep.json'
     data_root  = '/Users/rpage/Library/CloudStorage/GoogleDrive-rdmpage@gmail.com/My Drive/iNat/'
     
     # set evaluate to True to run the test set
@@ -42,7 +42,7 @@ class Params:
     save_preds = True
     op_file_name = 'inat2018_test_preds.csv' # submission file
     if evaluate == True:
-        val_file = 'val.json' 
+        val_file = 'val-lep.json' 
 
 best_prec3 = 0.0  # store current best top 3
 
