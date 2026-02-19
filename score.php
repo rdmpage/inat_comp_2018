@@ -4,7 +4,7 @@
 
 $image_basedir = '/Users/rpage/Library/CloudStorage/GoogleDrive-rdmpage@gmail.com/My Drive/iNat';
 
-$test_filename   = 'val.json';
+$test_filename   = 'val-lep.json';
 $result_filename = 'inat2018_test_preds.csv';
 
 // Read data we are testing

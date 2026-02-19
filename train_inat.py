@@ -22,7 +22,7 @@ class Params:
     # arch = 'inception_v3'
     num_classes = 8142
     workers = 8
-    epochs = 100
+    epochs = 60
     start_epoch = 0
     batch_size = 32  # might want to make smaller 
     lr = 0.0045
@@ -32,18 +32,26 @@ class Params:
     weight_decay = 1e-4
     print_freq = 100
 
+	# Lepidoptera
     # set this to path of model to resume training
     resume = 'model_best.pth.tar'  
-    train_file = 'train.json'
-    val_file   = 'val.json'
+    train_file = 'train-lep.json'
+    val_file   = 'val-lep.json'
     data_root  = '/Users/rpage/Library/CloudStorage/GoogleDrive-rdmpage@gmail.com/My Drive/iNat/'
+    
+    # Original dataset
+    # set this to path of model to resume training
+     #resume = 'model_best.pth.tar'  
+     #train_file = '/Volumes/LaCie/train2018.json'
+     #val_file   = '/Volumes/LaCie/val2018.json'
+     #data_root  = '/Volumes/LaCie/'  
 
     # set evaluate to True to run the test set
     evaluate = False
     save_preds = True
     op_file_name = 'inat2018_test_preds.csv' # submission file
     if evaluate == True:
-        val_file = 'test.json'
+        val_file = 'val-lep.json'
 
 best_prec3 = 0.0  # store current best top 3
 
